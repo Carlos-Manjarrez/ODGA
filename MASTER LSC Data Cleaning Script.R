@@ -108,7 +108,89 @@ LSC_SA<-merge(LSC_SA, addresses,
 
 original.var<-colnames(G3)[colnames(G3) %in% colnames(All.CSR)]
 
-subsetvars<-c(original.var, "CounselAdvice_Total",
+
+G3$total_education_cc<- rowSums(G3[,
+                                           grepl(".*_1[[:digit:]]",
+                                                 colnames(G3),ignore.case=T) 
+                                           ],na.rm=T)
+
+G3$total_employment_cc<- rowSums(G3[,
+                                            grepl(".*_2[[:digit:]]",
+                                                  colnames(G3),ignore.case=T) 
+                                            ],na.rm=T)
+G3$total_family_cc<- rowSums(G3[,
+                                        grepl(".*_3[[:digit:]]",
+                                              colnames(G3),ignore.case=T) 
+                                        ],na.rm=T)
+G3$total_juvenile_cc<- rowSums(G3[,
+                                          grepl(".*_4[[:digit:]]",
+                                                colnames(G3),ignore.case=T) 
+                                          ],na.rm=T)
+G3$total_health_cc<- rowSums(G3[,
+                                        grepl(".*_5[[:digit:]]",
+                                              colnames(G3),ignore.case=T) 
+                                        ],na.rm=T)
+
+G3$total_housing_cc<- rowSums(G3[,
+                                         grepl(".*_6[[:digit:]]",
+                                               colnames(G3),ignore.case=T) 
+                                         ],na.rm=T)
+G3$total_income_cc<- rowSums(G3[,
+                                        grepl(".*_7[[:digit:]]",
+                                              colnames(G3),ignore.case=T) 
+                                        ],na.rm=T)
+G3$total_individual_cc<- rowSums(G3[,
+                                            grepl(".*_8[[:digit:]]",
+                                                  colnames(G3),ignore.case=T) 
+                                            ],na.rm=T)
+G3$total_misc_cc<- rowSums(G3[,
+                                      grepl(".*_9[[:digit:]]",
+                                            colnames(G3),ignore.case=T) 
+                                      ],na.rm=T)
+
+G3$total_consumer<- rowSums(G3[,
+                                       grepl("[[:alpha:]]+_[[:digit:]][[:alpha:]]",
+                                             colnames(G3),ignore.case=T) 
+                                       ],na.rm=T)
+
+
+G3$domviol_custody_cc<- rowSums(G3[,
+                                           grepl("[[:alpha:]]+_31|[[:alpha:]]+_37",
+                                                 colnames(G3),ignore.case=T) 
+                                           ],na.rm=T)
+
+
+G3$trafficking_all_staff<- rowSums(G3[,
+                                              grepl(".*_86s",
+                                                    colnames(G3),ignore.case=T) 
+                                              ],na.rm=T)
+G3$trafficking_all_pai<- rowSums(G3[,
+                                            grepl(".*_86p",
+                                                  colnames(G3),ignore.case=T) 
+                                            ],na.rm=T)
+
+G3$trafficking_all<- rowSums(G3[,colnames(G3) %in%
+                                          c("trafficking_all_pai",
+                                            "trafficking_all_staff"
+                                          )],na.rm=T)
+
+
+
+subsetvars<-c(original.var,
+              "total_education_cc",
+              "total_employment_cc",
+              "total_family_cc", 
+              "total_juvenile_cc",
+              "total_health_cc",
+              "total_housing_cc",
+              "total_income_cc",
+              "total_individual_cc",
+              "total_misc_cc",
+              "total_consumer",
+              "domviol_custody_cc",
+              "trafficking_all_staff",
+              "trafficking_all_pai",
+              "trafficking_all", "CounselAdvice_Total",
               "LimitedAction_Total",
               "NegotSetl_wo_Lit_Total",
               "NegotSetl_with_Lit_Total",
@@ -118,6 +200,8 @@ subsetvars<-c(original.var, "CounselAdvice_Total",
               "CourtDec_Appeals_Total",
               "Other_Closure_Total",
               "Extensive_Services_Total")
+
+
 addedcc<-G3[, subsetvars]
 addedcc[addedcc=="NULL"]<-NA
 
@@ -133,10 +217,6 @@ LSC_SA<-merge(LSC_SA, addedcc,
 
 poverty<-read.csv("poverty_by_year_100.csv", stringsAsFactors=F)
 
-LSC_SA<-merge(LSC_SA, poverty,
-              by.x=c("serv_area", "wfta_year"), 
-              by.y=c("serv_area", "year"),
-              all.x=T)
 
 
 ### get rid of NA in service area types, check they're all labeled accurately
@@ -206,80 +286,15 @@ LSC_SA$total_cc_calc<- rowSums(LSC_SA[,colnames(LSC_SA) %in%
 
 colnames(revenue)[grepl("ot", colnames(revenue),ignore.case=T)]
 
-## Aggregate vaiables
-
-
-LSC_SA$total_education_cc<- rowSums(LSC_SA[,
-                                   grepl(".*_1[[:digit:]]",
-                                         colnames(LSC_SA),ignore.case=T) 
-                                   ],na.rm=T)
-
-LSC_SA$total_employment_cc<- rowSums(LSC_SA[,
-                                    grepl(".*_2[[:digit:]]",
-                                          colnames(LSC_SA),ignore.case=T) 
-                                    ],na.rm=T)
-LSC_SA$total_family_cc<- rowSums(LSC_SA[,
-                                grepl(".*_3[[:digit:]]",
-                                      colnames(LSC_SA),ignore.case=T) 
-                                ],na.rm=T)
-LSC_SA$total_juvenile_cc<- rowSums(LSC_SA[,
-                                  grepl(".*_4[[:digit:]]",
-                                        colnames(LSC_SA),ignore.case=T) 
-                                  ],na.rm=T)
-LSC_SA$total_health_cc<- rowSums(LSC_SA[,
-                                grepl(".*_5[[:digit:]]",
-                                      colnames(LSC_SA),ignore.case=T) 
-                                ],na.rm=T)
-
-LSC_SA$total_housing_cc<- rowSums(LSC_SA[,
-                                 grepl(".*_6[[:digit:]]",
-                                       colnames(LSC_SA),ignore.case=T) 
-                                 ],na.rm=T)
-LSC_SA$total_income_cc<- rowSums(LSC_SA[,
-                                grepl(".*_7[[:digit:]]",
-                                      colnames(LSC_SA),ignore.case=T) 
-                                ],na.rm=T)
-LSC_SA$total_individual_cc<- rowSums(LSC_SA[,
-                                    grepl(".*_8[[:digit:]]",
-                                          colnames(LSC_SA),ignore.case=T) 
-                                    ],na.rm=T)
-LSC_SA$total_misc_cc<- rowSums(LSC_SA[,
-                              grepl(".*_9[[:digit:]]",
-                                    colnames(LSC_SA),ignore.case=T) 
-                              ],na.rm=T)
-
-LSC_SA$total_consumer<- rowSums(LSC_SA[,
-                               grepl("[[:alpha:]]+_[[:digit:]][[:alpha:]]",
-                                     colnames(LSC_SA),ignore.case=T) 
-                               ],na.rm=T)
-
-
-LSC_SA$domviol_custody_cc<- rowSums(LSC_SA[,
-                      grepl("[[:alpha:]]+_31|[[:alpha:]]+_37",
-                            colnames(LSC_SA),ignore.case=T) 
-                      ],na.rm=T)
-
-
-LSC_SA$trafficking_all_staff<- rowSums(LSC_SA[,
-                                      grepl(".*_86s",
-                                            colnames(LSC_SA),ignore.case=T) 
-                                      ],na.rm=T)
-LSC_SA$trafficking_all_pai<- rowSums(LSC_SA[,
-                                    grepl(".*_86p",
-                                          colnames(LSC_SA),ignore.case=T) 
-                                    ],na.rm=T)
-
-LSC_SA$trafficking_all<- rowSums(LSC_SA[,colnames(LSC_SA) %in%
-                                  c("trafficking_all_pai",
-                                    "trafficking_all_staff"
-                                  )],na.rm=T)
-
-
 ## create total cc, contested, limited for staff and PAI
 
 LSC_SA$all_limited<- rowSums(LSC_SA[,colnames(LSC_SA) %in%
                                       c("LimitedAction_Total",
                                         "CounselAdvice_Total")],na.rm=T)
+
+colnames(LSC_SA)[grepl("^A_[[:digit:]]+s", colnames(LSC_SA),ignore.case=T)]
+
+
 
 LSC_SA$counsel.advice_staff<- rowSums(LSC_SA[,
                                              grepl("^A_[[:digit:]]+s",
@@ -455,6 +470,12 @@ LSC_SA$all.contested_pai<- rowSums(LSC_SA[,colnames(LSC_SA) %in%
                                               "court.decision.contested_pai",
                                               "court.decision.appeal_pai")],na.rm=T)
 
+LSC_SA<-merge(LSC_SA, poverty,
+              by.x=c("serv_area", "wfta_year"), 
+              by.y=c("serv_area", "year"),
+              all.x=T)
+
+
 
 LSC_SA$consumer.finance_oc= rowSums(LSC_SA[,colnames(LSC_SA) %in% c("con_fin_s", "con_fin_p1", "con_fin_p2", "con_fin_p3")], na.rm=T)
 LSC_SA$education_oc= rowSums(LSC_SA[,colnames(LSC_SA) %in% c("education_s", "education_p1", "education_p2", "education_p3")], na.rm=T)
@@ -476,7 +497,12 @@ LSC_SA$year.1 <-NULL
 # Check duplicated records and write csv
 table(duplicated(LSC_SA[, c("recipient_id", "wfta_year", "serv_area")]))
 
-write.csv(LSC_SA, "Master_LSC_Admin.csv")
+LSC_SA<-subset(LSC_SA, LSC_SA$wfta_year>=2008)
+
+tapply(LSC_SA$total_consumer, LSC_SA$wfta_year, sum, na.rm=T)
+
+
+write.csv(LSC_SA, "Master_LSC_Admin.62916.csv")
 
 
 ## create codebook 
@@ -567,7 +593,7 @@ for (i in names(LSC_SA)){
 }
 
 View(codebook)
-write.csv(codebook, "master_codebook.csv")
+#write.csv(codebook, "master_codebook.csv")
 
 
 ### renaming variable names
@@ -582,7 +608,9 @@ str(updates)
 updates[is.na(updates)] <- colnames(LSC_SA)[is.na(updates)]
 updates[updates==""] <- colnames(LSC_SA)[updates==""]
 colnames(LSC_SA) <- updates
-str(LSC_SA)
+names(LSC_SA)
+
+tapply(LSC_SA$total_education_cc, LSC_SA$year, sum, na.rm=T)
 
 write.csv(LSC_SA,"Master_GAR_SA_level_2008_2015.csv")
 
@@ -600,4 +628,28 @@ staff<-read_csv("E1ab_Staffing_1999_2015.csv",
 
 
 
+master<-read.csv("Master_GAR_SA_level_2008_2015.csv", stringsAsFactors=F, header=T)
+names(master)
+table(master$State)
+master<-master[master$State=="CA",]
+master<-master[master$year==2014,]
 
+sum(master$total_housing_oc)
+
+names(master)
+
+tapply(revenue$non_lsc_funding, revenue$wfta_year, sum, na.rm=T)
+tapply(revenue$lsc_funding, revenue$wfta_year, sum, na.rm=T)
+
+names(probono.data)
+
+probono.data$conversion<- probono.data$total_probono_aar/probono.data$total_probono_aap
+hist(probono.data$conversion)
+probono.data$conversion[probono.data$conversion>1]<-NA
+hist(probono.data$conversion)
+
+table(probono.data$total_probono_cr)
+
+View(probono.data[probono.data$recipient_id==948010 & probono.data$year==2015, ])
+
+names(probono.data)
