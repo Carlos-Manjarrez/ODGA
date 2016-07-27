@@ -111,9 +111,6 @@ probono.data<-merge(master_rl, staff.pai, by.x=c("recipient_id", "year"),
                     by.y=c("recipient_id", "year"), all.x=T)
 
 
-str(probono.data)
-
-
 probono.data<-merge(probono.data, addresses, 
                        by.x=c("recipient_id"), by.y=c("Recipient.ID"), 
                        all.x=T)
@@ -125,8 +122,50 @@ probono.data$pai_funding<- probono.data$Basic_Fld_LSC* (.125)
 probono.data_2015<-subset(probono.data, probono.data$year==2015,)
 
 ### Correlation Calculations
-cor(probono.data$total_probono_aar,  probono.data$total_probono_cc, use = "pairwise.complete.obs",
-    method = c("pearson") )
+
+probono.data_corr<-probono.data_2015[,c("total_probono_cc", "has_pai",
+        "has_pai_attorney", "total_extended_s", "total_probono_aap",
+        "total_funding",  "Bar_Grants_NLSC", "Corp_Indiv_Contributions_NLSC")]
+
+#log transform
+probono.data_corr$total_probono_cc <-log(probono.data_corr$total_probono_cc+1)
+probono.data_corr$total_extended_s <-log(probono.data_corr$total_extended_s+1)
+probono.data_corr$total_probono_aap <-log(probono.data_corr$total_probono_aap+1)
+probono.data_corr$total_funding <-log(probono.data_corr$total_funding+1)
+probono.data_corr$Bar_Grants_NLSC <-log(probono.data_corr$Bar_Grants_NLSC+1)
+probono.data_corr$Corp_Indiv_Contributions_NLSC <-log(probono.data_corr$Corp_Indiv_Contributions_NLSC+1)
+
+cor(probono.data_corr, method=c("pearson"),use = "complete.obs")
+
+corstarsl <- function(x){ 
+  require(Hmisc) 
+  x <- as.matrix(x) 
+  R <- rcorr(x)$r 
+  p <- rcorr(x)$P 
+  
+  ## define notions for significance levels; spacing is important.
+  mystars <- ifelse(p < .001, "***", ifelse(p < .01, "** ", ifelse(p < .05, "* ", " ")))
+  
+  ## trunctuate the matrix that holds the correlations to two decimal
+  R <- format(round(cbind(rep(-1.11, ncol(x)), R), 2))[,-1] 
+  
+  ## build a new matrix that includes the correlations with their apropriate stars 
+  Rnew <- matrix(paste(R, mystars, sep=""), ncol=ncol(x)) 
+  diag(Rnew) <- paste(diag(R), " ", sep="") 
+  rownames(Rnew) <- colnames(x) 
+  colnames(Rnew) <- paste(colnames(x), "", sep="") 
+  
+  ## remove upper triangle
+  Rnew <- as.matrix(Rnew)
+  Rnew[upper.tri(Rnew, diag = TRUE)] <- ""
+  Rnew <- as.data.frame(Rnew) 
+  
+  ## remove last column and return the matrix (which is now a data frame)
+  Rnew <- cbind(Rnew[1:length(Rnew)-1])
+  return(Rnew) 
+}
+
+corstarsl(probono.data_corr)
 
 # Regression Analysis
 
