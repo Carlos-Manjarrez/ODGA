@@ -85,8 +85,8 @@ View(national_file[sample(1:nrow(national_file), 100), ])
 write.csv(national_file, "national_file.csv")
 
 ### THAT IS ALL YOU NEED TO DO if you're just interested in a file
-# with datpoints for each county. The following notes describe how to merge to 
-## geographic identifiers: 
+# with datpoints for each county, tract etc. The following notes describe how to merge 
+## with geographic identifiers: 
 
 ### MERGING INTERNAL LATITUDE, LONGITUDE
 
@@ -94,7 +94,7 @@ write.csv(national_file, "national_file.csv")
 
 ### You can merge the data you created with Census Gazetter Files that show
 ### internal longitude and latitude points, if you're using this data in a 
-## GIS or mapping software. Gazetter files for the appropriate vintage can be downloaded here:
+## GIS or mapping software. Gazetter files for the appropriate vintage can be downloaded here, and merged based on FIPS codes:
 # https://www.census.gov/geo/maps-data/data/gazetteer.html
 ## I found that the easiest way to merge geographic data onto the file. 
 
