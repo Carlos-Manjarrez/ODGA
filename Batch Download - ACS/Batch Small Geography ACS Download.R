@@ -1,7 +1,7 @@
 ### BATCH ACS DOWNLOAD CODE: 
 
 # this code can be used to do a batch national-level download of ACS data for a particular
-# table name and geography type (i.e. tract or county). 
+# table name and geography type (i.e. tract or county level). 
 
 ## this  code is a good option when you know the names of the tables you want to download, 
 ## and want a batch national file. For state level data, and if you don't know the names
