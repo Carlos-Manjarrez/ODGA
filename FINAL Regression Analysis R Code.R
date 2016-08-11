@@ -1,7 +1,7 @@
 
 ###regression analysis 
 ### looks at recipient/year level
-### weight staffing variables by FTE 
+### weights by pct FTE (so all variables are pct FTE * variable)/total FTE
 
 setwd("~/Documents/LSC Data/Original GAR Export (April 2016)")
 
@@ -55,32 +55,32 @@ jobs$attorneys<-rowSums(jobs[, colnames(jobs) %in%
                                  "Director of Litigation")], na.rm=T)
 
 jobs$casesupport<-rowSums(jobs[, colnames(jobs) %in%
-                                 c("Law Clerk","Paralegal")], na.rm=T)
+                                        c("Law Clerk","Paralegal")], na.rm=T)
 
 
 jobs$casesupport_and_attorneys<-rowSums(jobs[, colnames(jobs) %in%
-                                               c("Law Clerk","Paralegal", "Supervising Attorney",
-                                                 "Staff Attorney", "Managing Attorney",
-                                                 "Director of Litigation")], na.rm=T)
+                               c("Law Clerk","Paralegal", "Supervising Attorney",
+                                 "Staff Attorney", "Managing Attorney",
+                                 "Director of Litigation")], na.rm=T)
 
 jobs$leadership<-rowSums(jobs[, colnames(jobs) %in%
-                                c("Deputy Director",
-                                  "Development Director",
-                                  "Executive Director")], na.rm=T)
+                                               c("Deputy Director",
+                                                 "Development Director",
+                                                 "Executive Director")], na.rm=T)
 
 jobs<-rename(jobs, replace=c("PAI Coordinator"="pai.coordinator"))
 
 jobs$office_support<-rowSums(jobs[, colnames(jobs) %in%
-                                    c("Administrative Assistant",
-                                      "Financial Professional",
-                                      "Grants Manager",
-                                      "Information Technology Staff",
-                                      "Management Professional",
-                                      "Other Position",
-                                      "pai.coordinator",
-                                      "Secretarial/Clerical",
-                                      "Senior Aide",
-                                      "Training Responsible Person")], na.rm=T)
+                                c("Administrative Assistant",
+                                  "Financial Professional",
+                                  "Grants Manager",
+                                  "Information Technology Staff",
+                                  "Management Professional",
+                                  "Other Position",
+                                  "pai.coordinator",
+                                  "Secretarial/Clerical",
+                                  "Senior Aide",
+                                  "Training Responsible Person")], na.rm=T)
 
 ## bilingual
 
@@ -147,7 +147,7 @@ staff.small$fte_yrs_exp_w_lsc = (staff.small$pct_of_fte)* (staff.small$yrs_exp_w
 staff.small<-staff.small[, c("year", "pct_of_fte", "fte_yrs_exp_curr", 
                              "fte_yrs_exp_prof", 
                              "fte_yrs_exp_w_lsc", "recipient_id", "type"
-)]
+                             )]
 
 str(staff.small)
 
@@ -156,7 +156,7 @@ sum.vars<-aggregate(staff.small[, c("fte_yrs_exp_curr",
                                     "fte_yrs_exp_w_lsc",
                                     "fte_yrs_exp_prof", 
                                     "fte_yrs_exp_curr")], by=list(staff.small$recipient_id, staff.small$year,
-                                                                  staff.small$type), FUN=sum, na.rm=TRUE)
+                                          staff.small$type), FUN=sum, na.rm=TRUE)
 str(sum.vars)
 
 
@@ -165,9 +165,9 @@ sum.vars$mean_fte_yrs_exp_w_lsc <- (sum.vars$fte_yrs_exp_w_lsc)/(sum.vars$pct_of
 sum.vars$mean_fte_yrs_exp_prof <- (sum.vars$fte_yrs_exp_prof)/(sum.vars$pct_of_fte)
 
 sum.vars<-sum.vars[,c("Group.1","Group.2", "Group.3",
-                      "pct_of_fte", "mean_fte_yrs_exp_curr", 
-                      "mean_fte_yrs_exp_w_lsc",
-                      "mean_fte_yrs_exp_prof", "fte_yrs_exp_prof" )]
+                     "pct_of_fte", "mean_fte_yrs_exp_curr", 
+                     "mean_fte_yrs_exp_w_lsc",
+                     "mean_fte_yrs_exp_prof", "fte_yrs_exp_prof" )]
 
 sum.vars <- rename(sum.vars, replace = c("Group.1" = "recipient_id",
                                          "Group.2"="year",
@@ -182,9 +182,9 @@ years.exp <- dcast(years.exp, recipient_id+year ~ job_type)
 str(years.exp)
 
 years.exp <- rename(years.exp, replace = c("Attorney"="attorney_prof_exp", 
-                                           "Case Support"= "case_support_prof_exp", 
-                                           "Leadership"="leadership_prof_exp",
-                                           "Office Support"="office_support_prof_exp"))
+                                                 "Case Support"= "case_support_prof_exp", 
+                                                 "Leadership"="leadership_prof_exp",
+                                                 "Office Support"="office_support_prof_exp"))
 
 
 ### create years professional experience sum variable
@@ -196,9 +196,9 @@ sum.exp <- dcast(sum.exp, recipient_id+year ~ job_type)
 str(sum.exp)
 
 sum.exp <- rename(sum.exp, replace = c("Attorney"="attorney_sum_exp", 
-                                       "Case Support"= "case_support_sum_exp", 
-                                       "Leadership"="leadership_sum_exp",
-                                       "Office Support"="office_support_sum_exp"))
+                                           "Case Support"= "case_support_sum_exp", 
+                                           "Leadership"="leadership_sum_exp",
+                                           "Office Support"="office_support_sum_exp"))
 
 #### years experience with LSC sum variable
 years.lsc<-sum.vars[,c("recipient_id", "job_type", "year", "mean_fte_yrs_exp_w_lsc")]
@@ -222,11 +222,11 @@ LSC_SA<-read.csv("Master_GAR_SA_level_2008_2015.csv", stringsAsFactors=F, header
 
 
 LSC_SA$total_pai_aap<-rowSums(LSC_SA[, colnames(LSC_SA) %in%
-                                       c("Pro_Bono_AAP"   ,    "Pro_Bono_S_AAP"   ,  "Judicare_AAP"  ,
-                                         "Contr_Vol_AAP"   ,  "Contr_Indv_AAP"   ,
-                                         "Co_Council_AAP"  ,   "LRS_AAP"      ,      "Other_AAP" ,
-                                         "CoCounsel_PB_AAP"  , "CoCounsel_Comp_AAP",
-                                         "Other_PB_AAP"     ,  "Other_Comp_AAP"  )], na.rm=T)
+                               c("Pro_Bono_AAP"   ,    "Pro_Bono_S_AAP"   ,  "Judicare_AAP"  ,
+                                 "Contr_Vol_AAP"   ,  "Contr_Indv_AAP"   ,
+                                 "Co_Council_AAP"  ,   "LRS_AAP"      ,      "Other_AAP" ,
+                                 "CoCounsel_PB_AAP"  , "CoCounsel_Comp_AAP",
+                                 "Other_PB_AAP"     ,  "Other_Comp_AAP"  )], na.rm=T)
 
 LSC_SA$total_pai_aar<-rowSums(LSC_SA[, colnames(LSC_SA) %in%
                                        c("Pro_Bono_AAR"   ,    "Pro_Bono_S_AAR"   ,  "Judicare_AAR"  ,
@@ -238,28 +238,28 @@ LSC_SA$total_pai_aar<-rowSums(LSC_SA[, colnames(LSC_SA) %in%
 
 names(LSC_SA)
 recipient.level <- ddply(LSC_SA, c("recipient_id", "year"), summarise,
-                         total_funding_LSC= sum(total_funding_LSC, na.rm=T),
-                         total_pai_aar= sum(total_pai_aar, na.rm=T),
-                         total_pai_aap = sum(total_pai_aap, na.rm=T), 
-                         total_funding_NLSC = sum(total_funding_NLSC, na.rm=T),
-                         total_limited_p = sum(total_limited_p, na.rm=T),
-                         total_limited_s = sum(total_limited_s, na.rm=T),
-                         total_extended_s = sum(total_extended_s, na.rm=T),
-                         total_extended_p = sum(total_extended_p, na.rm=T),
-                         total_cc = sum(total_cc, na.rm=T),
-                         total_cc_s =  sum(total_cc_s, na.rm=T),
-                         total_cc_p =  sum(total_cc_p, na.rm=T),
-                         total_contested =sum(total_contested, na.rm=T), 
-                         total_appeals =sum(total_Ic, na.rm=T),
-                         total_contested_s=sum( total_contested_s, na.rm=T),
-                         total_contested_p=sum(total_contested_p, na.rm=T),
-                         total_appeals_s=sum(total_Ic_s, na.rm=T), 
-                         total_appeals_p=sum(total_Ic_p, na.rm=T),
-                         total_Traing_Staff =sum(total_Traing_Staff, na.rm=T), 
-                         total_Lawyers_expenses =sum(total_Lawyers, na.rm=T), 
-                         total_Personnel_expenses =sum(total_Personnel, na.rm=T), 
-                         total_Empl_Benefits =sum(total_Empl_Benefits, na.rm=T),
-                         groups= sum(groups, na.rm=T))
+               total_funding_LSC= sum(total_funding_LSC, na.rm=T),
+               total_pai_aar= sum(total_pai_aar, na.rm=T),
+               total_pai_aap = sum(total_pai_aap, na.rm=T), 
+               total_funding_NLSC = sum(total_funding_NLSC, na.rm=T),
+               total_limited_p = sum(total_limited_p, na.rm=T),
+               total_limited_s = sum(total_limited_s, na.rm=T),
+               total_extended_s = sum(total_extended_s, na.rm=T),
+               total_extended_p = sum(total_extended_p, na.rm=T),
+               total_cc = sum(total_cc, na.rm=T),
+               total_cc_s =  sum(total_cc_s, na.rm=T),
+               total_cc_p =  sum(total_cc_p, na.rm=T),
+               total_contested =sum(total_contested, na.rm=T), 
+               total_appeals =sum(total_Ic, na.rm=T),
+               total_contested_s=sum( total_contested_s, na.rm=T),
+               total_contested_p=sum(total_contested_p, na.rm=T),
+               total_appeals_s=sum(total_Ic_s, na.rm=T), 
+               total_appeals_p=sum(total_Ic_p, na.rm=T),
+               total_Traing_Staff =sum(total_Traing_Staff, na.rm=T), 
+               total_Lawyers_expenses =sum(total_Lawyers, na.rm=T), 
+               total_Personnel_expenses =sum(total_Personnel, na.rm=T), 
+               total_Empl_Benefits =sum(total_Empl_Benefits, na.rm=T),
+               groups= sum(groups, na.rm=T))
 
 str(recipient.level)
 
@@ -288,20 +288,20 @@ regression.data<-merge(regression.data, addresses,
                        all.x=T)
 
 regression.data<-merge(regression.data, bilingual, 
-                       by.x=c("recipient_id", "year"), 
-                       by.y=c("recipient_id", "year"), 
-                       all.x=T)
+                      by.x=c("recipient_id", "year"), 
+                      by.y=c("recipient_id", "year"), 
+                      all.x=T)
 
 
 ### standardize with complete cases across models to better compare models
 #varlist <- c("total.staff.cc", "funding", "attorney_lsc_exp", "attorneys",
-# "Primary.State.Province", "recipient_id", "wfta_year")
+            # "Primary.State.Province", "recipient_id", "wfta_year")
 #regression.data <- regression.data[complete.cases(regression.data[, varlist]), ]
 
 str(regression.data)
 
 regression.data$total_funding <- rowSums(regression.data[, colnames(regression.data) %in%
-                                                           c("total_funding_LSC", "total_funding_NLSC")], na.rm=T)
+                                                c("total_funding_LSC", "total_funding_NLSC")], na.rm=T)
 
 regression.data$prop_lsc<- (regression.data$total_funding_LSC/ regression.data$total_funding)
 
@@ -327,7 +327,7 @@ regression.data<-merge(regression.data, state.data,
 #geocodes<-read.csv("geocode.csv", stringsAsFactors=F, header=T)
 #str(geocodes)
 #geocodes<-geocodes[,c("ID", "MatchScore", "Latitude", "Longitude", "CensusCountyFips", "Address", "City",
-#                     "State", "Zip", "CensusBlock", "CensusBlockGroup", "CensusTract")]
+ #                     "State", "Zip", "CensusBlock", "CensusBlockGroup", "CensusTract")]
 #
 
 #library("RJSONIO")
@@ -441,19 +441,19 @@ summary(model2)
 names(regression_data_2015)
 
 model3<-lm(log(total_cc_s+1)~ log(total_funding_LSC+1) +log(attorneys+1)+ 
-             log(casesupport +1) + log(attorney_prof_exp+1)+ log( case_support_prof_exp+1)+
-             +RUCC_2013+ log(prop_lsc+1) + 
-             log(real_nlsc_cases +1), 
-           data=regression_data_2015) 
+               log(casesupport +1) + log(attorney_prof_exp+1)+ log( case_support_prof_exp+1)+
+               +RUCC_2013+ log(prop_lsc+1) + 
+               log(real_nlsc_cases +1), 
+             data=regression_data_2015) 
 
 summary(model3)
 
 
 model3.1<-lm(log(total_cc_s+1)~ log(total_funding_LSC+1) +log(attorneys+1)+ 
-               log(casesupport +1) + log(attorney_prof_exp+1)+ log( case_support_prof_exp+1)+
-               +RUCC_2013+ log(prop_lsc+1) + log(prop_minority+1) +
-               log(real_nlsc_cases +1) + log(prop_native+1), 
-             data=regression_data_2015) 
+              log(casesupport +1) + log(attorney_prof_exp+1)+ log( case_support_prof_exp+1)+
+      +RUCC_2013+ log(prop_lsc+1) + log(prop_minority+1) +
+        log(real_nlsc_cases +1) + log(prop_native+1), 
+           data=regression_data_2015) 
 
 summary(model3.1)
 
@@ -465,7 +465,10 @@ regression_data_2015$weighted_cases <- (.5)*regression_data_2015$total_limited_s
 
 
 model4<-lm(log(weighted_cases+1)~ log(total_funding_LSC+1) +log(attorneys+1)+ 
-             log(casesupport +1) + log(attorney_prof_exp+1)+ log( case_support_prof_exp+1)+  RUCC_2013+ log(prop_lsc+1) + log(real_nlsc_cases +1),   data=regression_data_2015) 
+             log(casesupport +1) + log(attorney_prof_exp+1)+ log( case_support_prof_exp+1)+
+             +RUCC_2013+ log(prop_lsc+1) + log(prop_minority +1) + log(prop_native +1)+ 
+             log(real_nlsc_cases +1), 
+           data=regression_data_2015) 
 
 summary(model4)
 
@@ -475,11 +478,11 @@ summary(model4)
 ### correlation matrix variables: 
 
 correlation_data <-regression_data_2015[, c("total_cc_s", "total_funding_LSC", "attorneys",
-                                            "attorney_prof_exp" , "casesupport",
-                                            "case_support_prof_exp",
-                                            "RUCC_2013" ,"prop_lsc", "real_nlsc_cases", "prop_minority",
-                                            "prop_native"
-)]
+                                           "attorney_prof_exp" , "casesupport",
+                                             "case_support_prof_exp",
+                                             "RUCC_2013" ,"prop_lsc", "real_nlsc_cases", "prop_minority",
+                                           "prop_native"
+                                           )]
 
 
 correlation_data$total_cc_s<-log(correlation_data$total_cc_s+1)
@@ -535,7 +538,6 @@ corstarsl(regression_data_2015)
 
 
 write.csv(table, "table.csv")
-
 
 
 
