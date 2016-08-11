@@ -465,10 +465,7 @@ regression_data_2015$weighted_cases <- (.5)*regression_data_2015$total_limited_s
 
 
 model4<-lm(log(weighted_cases+1)~ log(total_funding_LSC+1) +log(attorneys+1)+ 
-             log(casesupport +1) + log(attorney_prof_exp+1)+ log( case_support_prof_exp+1)+
-             +RUCC_2013+ log(prop_lsc+1) + log(prop_minority +1) + log(prop_native +1)+ 
-             log(real_nlsc_cases +1), 
-           data=regression_data_2015) 
+             log(casesupport +1) + log(attorney_prof_exp+1)+ log( case_support_prof_exp+1)+  RUCC_2013+ log(prop_lsc+1) + log(real_nlsc_cases +1),   data=regression_data_2015) 
 
 summary(model4)
 
